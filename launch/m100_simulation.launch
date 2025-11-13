@@ -1,0 +1,102 @@
+<launch>
+	<!-- Gazebo -->
+	<arg name="gazebo_world" default="cave_world_closed" />
+	<arg name="use_sim_time" default="True"/>
+	<arg name="gazebo_gui" default="True"/>
+	<arg name="x" default="0.0"/>
+	<arg name="y" default="0.0"/>
+	<arg name="z" default="0.3"/>
+	<arg name="fast" default="True"/>
+	<arg name="better_obs_avoidance" default="False"/>
+	<arg name="max_speed" default="1.5"/>
+
+	<!-- Octomap -->
+	<arg name="map_octomap" default="False"/>
+	<arg name="map_file" default="ground_slopes.ot"/>
+
+	<arg name="live_octomap" default="False"/>
+	<arg name="range" default="35"/>
+	<!-- <arg name="resolution" default="0.35"/> -->
+	<arg name="filter_ground" default="False"/>
+
+	<!-- Voxblox Node -->
+	<arg name="resolution" default="0.2"/>
+	<arg name="voxels_per_side" default="16"/>
+	<arg name="max_ray" default="15.0"/>
+	<arg name="clear_sphere" default="True"/>
+	<arg name="clear_sphere_r" default="0.5"/>
+	<arg name="occ_sphere_r" default="1.2"/>
+
+	<include file="$(find voxblox_ros)/launch/drone.launch">
+		<arg name="resolution" value="$(arg resolution)"/>
+		<arg name="voxels_per_side" value="$(arg voxels_per_side)"/>
+		<arg name="max_ray" value="$(arg max_ray)"/>
+		<arg name="clear_sphere" value="$(arg clear_sphere)"/>
+		<arg name="clear_sphere_r" value="$(arg clear_sphere_r)"/>
+		<arg name="occ_sphere_r" value="$(arg occ_sphere_r)"/>
+	</include>
+
+	<!-- TF -->
+	<arg name="perfect_odom" default="true" />
+
+	<group if="$(eval gazebo_world == 'darpa_subt_final_circuit')">
+		<!-- <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find planner_gazebo_sim)/models:$(find subt_cave_sim)/models"/> -->
+	</group>
+	<include file="$(find m100_simulation)/launch/m100.launch">
+		<arg name="use_sim_time" value="$(arg use_sim_time)"/>
+		<arg name="gazebo_world" value="$(arg gazebo_world)"/>
+		<arg name="gui" value="$(arg gazebo_gui)"/>
+		<arg name="x" default="$(arg x)"/>
+		<arg name="y" default="$(arg y)"/>
+		<arg name="z" default="$(arg z)"/>
+		<arg name="perfect_odom" value="$(arg perfect_odom)" />
+	</include>
+
+	<group if="$(arg better_obs_avoidance)">
+		<include file="$(find m100_simulation)/launch/mav_evit_obs.launch"/>
+	</group>
+	<group unless="$(arg better_obs_avoidance)">
+		<group unless="$(arg fast)">
+			<include file="$(find m100_simulation)/launch/mav.launch"/>
+		</group>
+
+		<group if="$(arg fast)">
+			<include file="$(find m100_simulation)/launch/mav_de_carreras.launch">
+				<arg name="max_speed" value="$(arg max_speed)"/>
+			</include>
+		</group>
+	</group>
+		<!-- <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+		<arg name="gazebo_world" value="$(arg gazebo_world)"/> -->
+	<!-- </include> -->
+
+	<group if="$(arg live_octomap)">
+		<include file="$(find m100_simulation)/launch/octomap.launch">
+			<arg name="range" value="$(arg range)"/>
+			<arg name="resolution" value="$(arg resolution)"/>
+			<arg name="filter_ground" value="$(arg filter_ground)"/>
+		</include>
+	</group>
+
+	<group if="$(arg map_octomap)">
+		<node pkg="octomap_server" type="octomap_server_node" name="octomap_talker" args="$(find mussol_octomap)/maps/$(arg map_file)">
+			<param name="frame_id" type="string" value="map" />
+		</node>
+	</group>
+
+	<include file="$(find teleop_twist_joy)/launch/teleop.launch">
+		<!-- <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+		<arg name="gazebo_world" value="$(arg gazebo_world)"/> -->
+	</include>
+
+
+	<group if="$(arg perfect_odom)">
+		<!-- TF from map to odom -->
+		<node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
+	</group>
+
+	<!-- Visualize the point cloud in rviz -->
+  	<node name="rviz" pkg="rviz" type="rviz" output="log" args="-d $(find m100_simulation)/rviz/exploration_drone.rviz" />
+
+
+</launch>

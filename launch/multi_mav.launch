@@ -1,0 +1,148 @@
+<launch>
+    <arg name="tf_prefix" default=""/>
+    <arg name="name" default=""/>
+
+    <!-- PC filtering -->
+    <node pkg="pointcloud_tools" type="pointcloud_filtering" name="pc_obstacles">
+        <!--param name="resolution" value="0.05" /-->
+        <param name="apply_x_limits" type="bool" value="true"/>
+        <param name="apply_y_limits" type="bool" value="true"/>
+        <param name="apply_z_limits" type="bool" value="true"/>
+        <param name="apply_voxel_grid" type="bool" value="true"/>
+        <param name="apply_outlier_removal" type="bool" value="false"/>
+        <param name="x_filter_min" type="double" value="-20.0"/>
+        <param name="x_filter_max" type="double" value="20.0"/>
+        <param name="y_filter_min" type="double" value="-20.0"/>
+        <param name="y_filter_max" type="double" value="20.0"/>
+        <param name="z_filter_min" type="double" value="-20.0"/>
+        <param name="z_filter_max" type="double" value="20.0"/>
+        <param name="voxel_size" type="double" value="0.5"/>
+        <param name="mean_k" type="int" value="50"/>
+        <param name="std_dev_thresh" type="double" value="1.0"/>
+
+        <param name="fixed_frame" type="string" value="$(arg tf_prefix)/odom" />
+
+        <remap from="input" to="/$(arg name)/os1_cloud_node/points" />
+        <remap from="output" to="/$(arg name)/pc_obstacles/output" />
+
+    </node>
+
+
+    <!-- Auxiliar simulation -->
+    <node pkg="m100_simulation" type="aux_simulation" name="aux_simulation" output="log" respawn="true">
+
+        <param name="max_ang_vel" type="double" value="0.7" />
+        <param name="kp" type="double" value="0.7" />
+        <param name="kd" type="double" value="0.0" />
+        <param name="ki" type="double" value="0.0" />
+        <param name="max_integ_term" type="double" value="0.0" />
+
+        <remap from="~odometry_in" to="/$(arg name)/ground_truth/state" />
+
+        <remap from="~height_out" to="/$(arg name)/height_estimator/height" />
+        <remap from="~status_out" to="/$(arg name)/dji_flight_controller/flight_status" />
+        <remap from="~local_odometry_out" to="/$(arg name)/ekf_local/odom" />
+        <remap from="~global_odometry_out" to="/$(arg name)/ekf_global/odom" />
+    </node>
+
+
+    <!-- Safety Manager -->
+    <node pkg="srv_mav_behaviours" type="safety_manager_node" name="safety_manager" output="screen" respawn="true">
+
+        <param name="frequency" type="double" value="40.0" />
+        <param name="robot_radius" type="double" value="1.0" />
+        <param name="max_speed" type="double" value="1.5" />
+        <param name="min_distance_wall" type="double" value="1.5" />
+        <param name="attenuation_distance_wall" type="double" value="2.0" />
+        <param name="degrees_for_attenuation" type="double" value="45.0" />
+        <param name="K_wall_repulsion" type="double" value="1.0" />
+        <param name="min_distance_ceiling" type="double" value="1.5" />
+        <param name="attenuation_distance_ceiling" type="double" value="2.2" />
+        <param name="K_ceiling_repulsion" type="double" value="1.0" />
+        <param name="max_height" type="double" value="12.0" />
+        <param name="attenuation_max_height" type="double" value="11.0" />
+        <param name="K_max_height_attraction" type="double" value="0.4" />
+
+        <param name="base_frame" type="string" value="/$(arg name)/base_link" />
+
+        <remap from="~flight_status" to="/$(arg name)/dji_flight_controller/flight_status" />
+        <remap from="~user_twist" to="/$(arg name)/cmd_vel_desired" /> <!--  Twist des mando -->
+        <remap from="~point_cloud" to="/$(arg name)/pc_obstacles/output" /> <!--  PC filtrada (millor rendiment) -->
+        <remap from="~imu" to="/$(arg name)/raw_imu" />
+        <remap from="~height" to="/$(arg name)/height_estimator/height" /> <!-- Alçada de vol respecte posicio inicial -->
+        <!-- <remap from="~ceiling_distance" to="/teraranger/range" /> -->
+        <remap from="~ground_distance" to="/$(arg name)/lidarlite3/range" /> <!-- distancia obstacles inferior actual (s'haruia de fer orthoprojector) -->
+        <remap from="~position_ctrl_twist" to="/$(arg name)/position_controller/velocity_command" />
+        <remap from="~yaw_ctrl_twist" to="/$(arg name)/yaw_controller/velocity_command" />
+        <remap from="~position_control_granted" to="/$(arg name)/mission_manager/position_control_granted" />
+        <remap from="~yaw_control_granted" to="/$(arg name)/mission_manager/yaw_control_granted" />
+        <remap from="~twist_out" to="/$(arg name)/cmd_vel" />
+
+    </node>
+
+    <!-- Mission Manager -->
+    <node pkg="srv_mav_behaviours" type="mission_manager_node" name="mission_manager" output="screen" respawn="true">
+
+        <param name="frequency" type="double" value="40.0" />
+        <param name="min_height" type="double" value="0.5" />
+        <param name="max_height" type="double" value="20.0" />
+        <param name="WP_tolerance" type="double" value="0.5" />
+        <param name="home_z" type="double" value="1.5" />
+        <param name="sweep_min_lateral_dist" type="double" value="3.0" />
+        <param name="vinspection_min_ceiling_dist" type="double" value="3.0" />
+        <param name="follow_trajectory" type="bool" value="true" />
+        <param name="follow_trajectory_delta" type="double" value="1.2" />
+        <param name="follow_trajectory_lambda" type="double" value="0.5" />
+
+        <remap from="~odom" to="/$(arg name)/ekf_local/odom" />
+        <remap from="~min_distance_left" to="/$(arg name)/safety_manager/min_distance_left" />
+        <remap from="~min_distance_right" to="/$(arg name)/safety_manager/min_distance_right" />
+        <!-- <remap from="~min_distance_up" to="/teraranger/range" /> -->
+        <remap from="~min_distance_down" to="/$(arg name)/range_filter/range" /> <!-- Needed -->
+        
+
+        <remap from="~request_position_control" to="/$(arg name)/safety_manager/request_position_control" />
+        <remap from="~give_up_position_control" to="/$(arg name)/safety_manager/give_up_position_control" />
+        <remap from="~enable_position_control" to="/$(arg name)/position_controller/enable_position_control" />
+        <remap from="~request_yaw_control" to="/$(arg name)/safety_manager/request_yaw_control" />
+        <remap from="~give_up_yaw_control" to="/$(arg name)/safety_manager/give_up_yaw_control" />
+        <remap from="~enable_yaw_control" to="/$(arg name)/yaw_controller/enable_yaw_control" />
+    </node>
+
+    <!-- Position Controller -->
+    <node pkg="srv_mav_control" type="position_ctrl_node" name="position_controller" output="screen" respawn="true">
+
+        <param name="max_vel_xy" type="double" value="1.0" />
+        <param name="max_vel_z" type="double" value="1.0" />
+        <param name="decouple_xy" type="bool" value="true" />
+        <param name="kp_xy" type="double" value="0.6" />
+        <param name="kd_xy" type="double" value="0.5" />
+        <param name="ki_xy" type="double" value="0.0" />
+        <param name="max_integ_term_xy" type="double" value="0.0" />
+        <param name="kp_xy_dec" type="double" value="0.6" />
+        <param name="kd_xy_dec" type="double" value="0.0" />
+        <param name="ki_xy_dec" type="double" value="0.0" />
+        <param name="max_integ_term_xy_dec" type="double" value="0.2" />
+        <param name="kp_z" type="double" value="0.5" />
+        <param name="kd_z" type="double" value="0.0" />
+        <param name="ki_z" type="double" value="0.0" />
+        <param name="max_integ_term_z" type="double" value="0.0" />
+
+        <remap from="~desired_pos" to="/$(arg name)/mission_manager/way_point" />
+        <remap from="~estimated_odo" to="/$(arg name)/ekf_local/odom" />
+    </node>
+
+    <!-- Yaw Controller -->
+    <node pkg="srv_mav_control" type="yaw_ctrl_node" name="yaw_controller" output="screen" respawn="true">
+
+        <param name="max_ang_vel" type="double" value="0.7" />
+        <param name="kp" type="double" value="0.7" />
+        <param name="kd" type="double" value="0.0" />
+        <param name="ki" type="double" value="0.0" />
+        <param name="max_integ_term" type="double" value="0.0" />
+
+        <remap from="~desired_yaw" to="/$(arg name)/mission_manager/way_point" />
+        <remap from="~estimated_odo" to="/$(arg name)/ekf_local/odom" />
+    </node>
+
+</launch>

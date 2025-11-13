@@ -1,0 +1,101 @@
+<launch>
+	<!-- Gazebo -->
+	<arg name="gazebo_world" default="simple_maze" />
+	<arg name="use_sim_time" default="True"/>
+	<arg name="paused" default="false"/>
+	<arg name="gui" default="true"/>
+	<arg name="headless" default="false"/>
+	<arg name="debug" default="false"/>
+
+	<!-- Octomap -->
+	<arg name="execute_octomap" default="True"/>
+	<arg name="range" default="35"/>
+	<arg name="resolution" default="0.35"/>
+	<arg name="filter_ground" default="False"/>
+
+	<!-- Drone 1 -->
+	<arg name="x_1" default="0.0"/>
+	<arg name="y_1" default="2.0"/>
+	<arg name="z_1" default="0.3"/>
+	<arg name="name_1" default="quadrotor_1"/>
+
+	<!-- Drone 2 -->
+	<arg name="x_2" default="40.0"/>
+	<arg name="y_2" default="-2.0"/>
+	<arg name="z_2" default="0.3"/>
+	<arg name="name_2" default="quadrotor_2"/>
+
+	<include file="$(find gazebo_ros)/launch/empty_world.launch">
+		<arg name="world_name" value="$(find m100_simulation)/worlds/$(arg gazebo_world).world"/>
+		<arg name="gui" value="$(arg gui)" />
+		<arg name="paused" value="$(arg paused)"/>
+		<arg name="use_sim_time" value="true"/>
+		<arg name="headless" value="$(arg headless)"/>
+	</include>
+
+	
+	<group ns = "quadrotor_1">
+
+		<include file="$(find m100_simulation)/launch/multi_spawn_quadrotor.launch">
+			<arg name="x" value="$(arg x_1)"/>
+			<arg name="y" value="$(arg y_1)"/>
+			<arg name="z" value="$(arg z_1)"/>
+			<arg name="name" value="$(arg name_1)"/>
+			<arg name="tf_prefix" value="$(arg name_1)"/>
+		</include>
+
+		<include file="$(find m100_simulation)/launch/multi_mav.launch">
+			<arg name="name" value="$(arg name_1)"/>
+			<arg name="tf_prefix" value="$(arg name_1)"/>
+		</include>
+
+	</group>
+
+	<group ns = "quadrotor_2">
+
+		<include file="$(find m100_simulation)/launch/multi_spawn_quadrotor.launch">
+			<arg name="x" value="$(arg x_2)"/>
+			<arg name="y" value="$(arg y_2)"/>
+			<arg name="z" value="$(arg z_2)"/>
+			<arg name="name" value="$(arg name_2)"/>
+			<arg name="tf_prefix" value="$(arg name_2)"/>
+		</include>
+
+		<include file="$(find m100_simulation)/launch/multi_mav.launch">
+			<arg name="name" value="$(arg name_2)"/>
+			<arg name="tf_prefix" value="$(arg name_2)"/>
+		</include>
+
+	</group>
+
+	<!-- Nodes to publish to same topic to generate octomap -->
+	<node pkg="topic_tools" type="transform" name="transform1" args="/$(arg name_1)/os1_cloud_node/points /os1_cloud_node/points sensor_msgs/PointCloud2 'm'">
+	</node>
+
+	<node pkg="topic_tools" type="transform" name="transform2" args="/$(arg name_2)/os1_cloud_node/points /os1_cloud_node/points sensor_msgs/PointCloud2 'm'">
+	</node>
+
+	<!-- Node to use the two pointclouds to generate just one octomap -->
+	<node pkg="topic_tools" type="relay" name="relay" args="/os1_cloud_node/points /os1_cloud_node/points_">
+	</node>
+
+	<group if="$(arg execute_octomap)">
+		<include file="$(find m100_simulation)/launch/multi_octomap.launch">
+			<arg name="range" value="$(arg range)"/>
+			<arg name="resolution" value="$(arg resolution)"/>
+			<arg name="filter_ground" value="$(arg filter_ground)"/>
+		</include>
+	</group>
+
+	<!-- <include file="$(find teleop_twist_joy)/launch/teleop.launch">
+	</include> -->
+
+	<!-- TF from map to odom -->
+  	<node pkg="tf" type="static_transform_publisher" name="map2odom1" args="0 0 0 0 0 0 map $(arg name_1)/odom 100" />
+	<node pkg="tf" type="static_transform_publisher" name="map2odom2" args="0 0 0 0 0 0 map $(arg name_2)/odom 100" />
+
+	<!-- Visualize the point cloud in rviz -->
+  	<node name="rviz" pkg="rviz" type="rviz" args="-d $(find m100_simulation)/rviz/multi_exploration_drone.rviz" />
+
+
+</launch>

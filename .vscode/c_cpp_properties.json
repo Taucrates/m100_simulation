@@ -1,0 +1,61 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/opt/ros/noetic/include/**",
+        "/home/tonitauler/ROS/catkin_ws/devel/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/adaptive_obb_ros/adaptive_obb/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/srv_tools/bag_tools/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/Onboard-SDK-ROS/dji_sdk/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/Onboard-SDK-ROS/dji_sdk_demo/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/eigen_checks/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/exploration_3d/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/gbplanner_ros/gbplanner/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_gazebo/hector_gazebo_plugins/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_gazebo/hector_gazebo_thermal_camera/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_localization/hector_pose_estimation/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_localization/hector_pose_estimation_core/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_quadrotor_controller/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_quadrotor_controller_gazebo/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_quadrotor_gazebo_plugins/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_quadrotor_model/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_quadrotor_pose_estimation/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/hector_quadrotor_noetic/hector_quadrotor/hector_uav_msgs/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/gbplanner_ros/kdtree/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/sim/lidar_simulator/lidar_gazebo_plugins/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/m100_simulation/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/mav_comm/mav_msgs/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/mav_comm/mav_planning_msgs/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/minkindr/minkindr/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/minkindr_ros/minkindr_conversions/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/numpy_eigen/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/sensors/ouster-gazebo-simulation/ouster_gazebo_plugins/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/pci_general/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/gbplanner_ros/planner_common/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/exploration/gbplanner_ros/planner_control_interface/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/sim/rotors_simulator/rotors_control/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/sim/rotors_simulator/rotors_gazebo_plugins/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/sim/rotors_simulator/rotors_joy_interface/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/gbplanner/sim/smb_simulator/smb_path_tracker/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/srv_mav_behaviours/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/srv_mav_control/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/srv_mav_state_estimation/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/robots/DJI_matrice_100/teleop_twist_joy/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/voxblox/voxblox/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/voxblox/voxblox_ros/include/**",
+        "/home/tonitauler/ROS/catkin_ws/src/tools/voxblox/voxblox_rviz_plugin/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}

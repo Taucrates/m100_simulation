@@ -1,0 +1,34 @@
+<launch>
+	<arg name="range" default="70"/>
+	<arg name="resolution" default="0.35"/>
+	<arg name="filter_ground" default="False"/>
+	
+
+	<!-- Octomap -->
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+		<param name="resolution" value="$(arg resolution)" />
+		<param name="latch" value="False" />
+
+		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+		<param name="frame_id" type="string" value="map" />
+		<param name="base_frame_id" value="base_link" />
+
+		<!-- Maximum range to integrate (speedup!) -->
+		<param name="sensor_model/max_range" value="$(arg range)" />
+
+		<!-- Ground detection  -->
+		<param name="filter_ground" value="$(arg filter_ground)" />
+
+		<!-- Data source to integrate (PointCloud2) -->
+		<remap from="cloud_in" to="/os1_cloud_node/points_" />
+		<!-- <param name="pointcloud_min_z" type="double" value="$(arg resolution)" /> -->
+		<!-- <param name="pointcloud_max_z" type="double" value="4.0" /> -->
+		<!-- <param name="occupancy_min_z" type="double" value="$(arg resolution)" /> -->
+		<!-- <param name="occupancy_max_z" type="double" value="4.0" /> -->
+
+		<param name="sensor_model/min" type="double" value="0.01" />
+		<param name="sensor_model/max" type="double" value="0.99" />
+
+	</node>
+
+</launch>

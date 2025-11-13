@@ -1,0 +1,77 @@
+<launch>
+	<arg name="range" default="70"/>
+	<arg name="resolution" default="0.35"/>
+	<arg name="filter_ground" default="False"/>
+	<arg name="filtering" default="False"/>
+
+
+	<!-- Point Cloud filtering -->
+	<!-- <node pkg="pointcloud_tools"
+        type="pointcloud_filtering"
+        name="pointcloud_filtering"
+        output="screen"
+        respawn="true">
+                <param name="resolution" value="0.05"/>
+                <param name="apply_x_limits" type="bool" value="false"/>
+                <param name="apply_y_limits" type="bool" value="false"/>
+                <param name="apply_z_limits" type="bool" value="false"/>
+                <param name="apply_voxel_grid" type="bool" value="true"/>
+                <param name="apply_outlier_removal" type="bool" value="false"/>
+                <param name="x_filter_min" type="double" value="-70"/>
+                <param name="x_filter_max" type="double" value="70.0"/>
+                <param name="y_filter_min" type="double" value="-70.0"/>
+                <param name="y_filter_max" type="double" value="70.0"/>
+                <param name="z_filter_min" type="double" value="-20.0"/>
+                <param name="z_filter_max" type="double" value="20.0"/>
+                <param name="voxel_size" type="double" value="$(arg resolution)"/>
+                <param name="mean_k" type="int" value="50"/>
+                <param name="std_dev_thresh" type="double" value="1.0"/>
+                <remap from="input" to="/os1_cloud_node/points" />
+                <remap from="pointcloud_filtering/output" to="/os1_cloud_node/points_" />
+	</node> -->
+
+	<node pkg="pointcloud_tools"
+        type="pcl_filter"
+        name="pcl_filter"
+        output="screen"
+        respawn="true">
+                <param name="robot_radius" value="0.45"/>
+                
+                <remap from="input" to="/os1_cloud_node/points" />
+                <remap from="pcl_filter/output" to="/pcl_filtered" />
+	</node>
+	
+
+	<!-- Octomap -->
+	<node pkg="octomap_server" type="octomap_server_node" name="octomap_server">
+		<param name="resolution" value="$(arg resolution)" />
+		<param name="latch" value="False" />
+
+		<!-- fixed map frame (set to 'map' if SLAM or localization running!) -->
+		<param name="frame_id" type="string" value="map" />
+		<param name="base_frame_id" value="base_link" />
+
+		<!-- Maximum range to integrate (speedup!) -->
+		<param name="sensor_model/max_range" value="$(arg range)" />
+
+		<!-- Ground detection  -->
+		<param name="filter_ground" value="$(arg filter_ground)" />
+
+		<!-- Data source to integrate (PointCloud2) -->
+		<!-- <remap from="octomap_binary" to="global/octomap_binary" />
+		<remap from="octomap_full" to="global/octomap_full" />
+		<remap from="occupied_cells_vis_array" to="global_occupied" /> -->
+		<remap from="cloud_in" to="/pcl_filtered" />
+		<!-- <param name="pointcloud_min_z" type="double" value="$(arg resolution)" /> -->
+		<!-- <param name="pointcloud_max_z" type="double" value="4.0" /> -->
+		<!-- <param name="occupancy_min_z" type="double" value="$(arg resolution)" /> -->
+		<!-- <param name="occupancy_max_z" type="double" value="4.0" /> -->
+
+		<param name="sensor_model/min" type="double" value="0.0001" />
+		<param name="sensor_model/max" type="double" value="0.99" />
+		<param name="sensor_model/hit" type="double" value="0.51" />
+		<param name="sensor_model/miss" type="double" value="0.49999" />
+
+	</node>
+
+</launch>

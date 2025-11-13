@@ -1,0 +1,161 @@
+<?xml version="1.0"?>
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- <xacro:include filename="$(find hector_sensors_description)/urdf/sonar_sensor.urdf.xacro" /> -->
+  <xacro:property name="pi" value="3.1415926535897931" />
+
+  <!-- Main quadrotor link -->
+  <xacro:macro name="quadrotor_base_macro">
+    <link name="base_link">
+      <inertial>
+        <mass value="1.477" />
+        <origin xyz="0 0 0" />
+        <inertia ixx="0.01152" ixy="0.0" ixz="0.0" iyy="0.01152" iyz="0.0" izz="0.0218" />
+      </inertial>
+
+      <visual>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <mesh filename="package://m100_simulation/simulation/meshes/dji_m100.dae"/>
+        </geometry>
+      </visual>
+      <!-- REDUCED -->
+      <collision>
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <geometry>
+          <box size="0.35 0.35 0.20"/>
+        </geometry>
+      </collision>
+      <!-- REALISTIC -->
+      <!-- <collision>
+        <origin xyz="0.235 0.235 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.17" length="0.23"/>
+        </geometry>
+      </collision>
+      <collision>
+      <origin xyz="0.235 -0.235 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.17" length="0.23"/>
+        </geometry>
+      </collision>
+      <collision>
+      <origin xyz="-0.235 0.235 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.17" length="0.23"/>
+        </geometry>
+      </collision>
+      <collision>
+      <origin xyz="-0.235 -0.235 0" rpy="0 0 0" />
+        <geometry>
+          <cylinder radius="0.17" length="0.23"/>
+        </geometry>
+      </collision> -->
+      
+    </link>
+
+    <gazebo reference="base_link">
+      <mu1>0.6</mu1>
+      <mu2>0.6</mu2>
+      <self_collide>1</self_collide>
+      <material>Gazebo/DarkGrey</material>
+      <kp  value="1000000.0"/>
+      <kd  value="1.0"/>
+    </gazebo>
+
+    <gazebo reference="base_link">        
+      <sensor type="ray" name="LidarLite">
+          <pose>-0.03 0.15 -0.13 0 1.57 0</pose>
+          <visualize>false</visualize>
+          <update_rate>50</update_rate>
+          <ray>
+            <range>
+                <min>0.05</min>
+                <max>150</max>
+                <resolution>0.02</resolution>
+            </range>
+          </ray>
+          <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+            <gaussianNoise>0.0</gaussianNoise>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>50</updateRate>
+            <topicName>lidarlite3/range</topicName>
+            <frameName>lidarlite3</frameName>
+            <radiation>INFRARED</radiation>
+            <fov>0</fov>
+          </plugin>
+      </sensor>  
+    </gazebo>
+
+    <!-- <gazebo reference="base_link">        
+      <sensor type="ray" name="LidarLite">
+          <pose>0.03 -0.15 0.13 0 -1.57 0</pose>
+          <visualize>true</visualize>
+          <update_rate>50</update_rate>
+          <ray>
+            <range>
+                <min>0.05</min>
+                <max>150</max>
+                <resolution>0.02</resolution>
+            </range>
+          </ray>
+          <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+            <gaussianNoise>0.0</gaussianNoise>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>50</updateRate>
+            <topicName>ceiling/lidarlite3/range</topicName>
+            <frameName>ceiling/lidarlite3</frameName>
+            <radiation>INFRARED</radiation>
+            <fov>0</fov>
+          </plugin>
+      </sensor>  
+    </gazebo> -->
+
+    <gazebo reference="base_link">        
+      <sensor type="ray" name="LidarLite">
+          <pose>0.03 -0.15 0.13 0 -1.57 0</pose>
+          <visualize>false</visualize>
+          <update_rate>40</update_rate>
+          <ray>
+            <scan>
+              <horizontal>
+                <samples>3</samples>
+                <resolution>3</resolution>
+                <min_angle>-0.39</min_angle>
+                <max_angle>0.39</max_angle>
+              </horizontal>
+              <vertical>
+                <samples>3</samples>
+                <resolution>3</resolution>
+                <min_angle>-0.39</min_angle>
+                <max_angle>0.39</max_angle>
+              </vertical>
+            </scan>
+            <range>
+              <min>0.05</min>
+              <max>3</max>
+              <resolution>0.01</resolution>
+            </range>
+          </ray>
+          <plugin filename="libgazebo_ros_range.so" name="gazebo_ros_range">
+            <gaussianNoise>0.005</gaussianNoise>
+            <alwaysOn>true</alwaysOn>
+            <updateRate>40</updateRate>
+            <topicName>ceiling/lidarlite3/range</topicName>
+            <frameName>ceiling/lidarlite3</frameName>
+            <radiation>INFRARED</radiation>
+            <!-- <fov>0</fov> -->
+          </plugin>
+      </sensor>  
+    </gazebo>
+
+    <!-- Sonar height sensor -->
+    <!-- <xacro:sonar_sensor name="sonar" parent="base_link" ros_topic="sonar_height" update_rate="10" min_range="0.03" max_range="3.0" field_of_view="${40*pi/180}" ray_count="3">
+      <origin xyz="-0.16 0.0 -0.012" rpy="0 ${90*pi/180} 0"/>
+    </xacro:sonar_sensor> -->
+
+  
+
+  </xacro:macro>
+</robot>

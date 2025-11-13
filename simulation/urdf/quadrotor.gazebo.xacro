@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+
+<robot name="quadrotor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <xacro:include filename="$(find m100_simulation)/simulation/urdf/quadrotor.urdf.xacro" />
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_plugins.gazebo.xacro" />
+
+    <!-- Real Sense -->
+    <!-- <xacro:include filename="$(find realsense2_description)/urdf/_d435.urdf.xacro" />
+    <xacro:sensor_d435 name="camera" topics_ns="camera" parent="base_link" publish_pointcloud="true">
+        <origin xyz="0.05 0 -0.05" rpy="0 0 0" />
+    </xacro:sensor_d435>  -->
+
+    <!-- Ouster -->
+    <xacro:include filename="$(find ouster_os1_64)/urdf/os1_64.urdf.xacro"/>
+    <xacro:os1_64 parent="base_link" name="ouster" prefix="os1_cloud_node" hz="10" samples="512" gpu="true" 
+            reduced="false" min_range="0.09" min_angle_v="-45" max_angle_v="45"
+            min_angle_h="-180.0" max_angle_h="180.0" noise="0.0000000000000001">
+        <origin xyz="0.0 0 0.14" rpy="0 0 0"/> 
+    </xacro:os1_64>
+
+    <!-- Livox MID360 -->
+    <!-- <xacro:include filename="$(find ouster_os1_64)/urdf/os1_64.urdf.xacro"/>
+    <xacro:os1_64 parent="base_link" name="ouster" prefix="os1_cloud_node" hz="10" samples="256" gpu="true" 
+            reduced="false" min_range="0.09" min_angle_v="-7" max_angle_v="52"> -->
+        <!-- 15 deg -->
+        <!-- <origin xyz="0.0 0 0.14" rpy="0  0.2617993878 0" />  -->
+        <!-- 20 deg -->
+        <!-- <origin xyz="0.0 0 0.14" rpy="0 0.3490658504 0" />  -->
+        <!-- 30 deg -->
+        <!-- <origin xyz="0.0 0 0.14" rpy="0 0.5235987756 0" />  -->
+    <!-- </xacro:os1_64> -->
+</robot>
+
