@@ -27,6 +27,10 @@
 	<arg name="clear_sphere_r" default="0.5"/>
 	<arg name="occ_sphere_r" default="1.2"/>
 
+	<!-- TF -->
+	<arg name="perfect_odom" default="true" />
+
+	<!-- Voxblox mapping -->
 	<include file="$(find voxblox_ros)/launch/drone.launch">
 		<arg name="resolution" value="$(arg resolution)"/>
 		<arg name="voxels_per_side" value="$(arg voxels_per_side)"/>
@@ -35,9 +39,6 @@
 		<arg name="clear_sphere_r" value="$(arg clear_sphere_r)"/>
 		<arg name="occ_sphere_r" value="$(arg occ_sphere_r)"/>
 	</include>
-
-	<!-- TF -->
-	<arg name="perfect_odom" default="true" />
 
 	<group if="$(eval gazebo_world == 'darpa_subt_final_circuit')">
 		<!-- <env name="GAZEBO_MODEL_PATH" value="${GAZEBO_MODEL_PATH}:$(find planner_gazebo_sim)/models:$(find subt_cave_sim)/models"/> -->
@@ -94,6 +95,11 @@
 		<!-- TF from map to odom -->
 		<node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
 	</group>
+
+	<!-- Take off and landing -->
+	<node pkg="takeoff_land" type="takeoff_land_code.py" name="takeoff_land" output="screen"/>
+	
+
 
 	<!-- Visualize the point cloud in rviz -->
   	<node name="rviz" pkg="rviz" type="rviz" output="log" args="-d $(find m100_simulation)/rviz/exploration_drone.rviz" />
