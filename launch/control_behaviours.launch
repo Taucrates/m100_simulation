@@ -42,7 +42,7 @@
 
 
     <!-- Safety Manager -->
-    <node pkg="srv_mav_behaviours" type="safety_manager_node" name="safety_manager" output="screen" respawn="true">
+    <node pkg="srv_mav_behaviours" type="safety_manager_node" name="safety_manager" output="log" respawn="true">
 
         <param name="frequency" type="double" value="40.0" />
         <!-- <param name="robot_radius" type="double" value="0.50" /> -->
@@ -79,7 +79,7 @@
     </node>
 
     <!-- Mission Manager -->
-    <node pkg="srv_mav_behaviours" type="mission_manager_node" name="mission_manager" output="screen" respawn="true">
+    <node pkg="srv_mav_behaviours" type="mission_manager_node" name="mission_manager" output="log" respawn="true">
 
         <param name="frequency" type="double" value="40.0" />
         <param name="min_height" type="double" value="0.1" />
@@ -109,7 +109,7 @@
     </node>
 
     <!-- Position Controller -->
-    <node pkg="srv_mav_control" type="position_ctrl_node" name="position_controller" output="screen" respawn="true">
+    <node pkg="srv_mav_control" type="position_ctrl_node" name="position_controller" output="log" respawn="true">
 
         <param name="use_constant_velocity" type="bool" value="$(arg use_constant_velocity)" />
         <param name="constant_velocity" type="double" value="$(arg max_speed)" />
@@ -135,7 +135,7 @@
     </node>
 
     <!-- Yaw Controller -->
-    <node pkg="srv_mav_control" type="yaw_ctrl_node" name="yaw_controller" output="screen" respawn="true">
+    <node pkg="srv_mav_control" type="yaw_ctrl_node" name="yaw_controller" output="log" respawn="true">
 
         <param name="max_ang_vel" type="double" value="0.7" />
         <param name="kp" type="double" value="0.7" />

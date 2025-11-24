@@ -1,33 +1,15 @@
 <launch>
 	<!-- Gazebo -->
-	<arg name="gazebo_world" default="cave_world_closed" />
+	<arg name="gazebo_world" default="indoor_at" />
 	<arg name="use_sim_time" default="True"/>
 	<arg name="gazebo_gui" default="True"/>
-	<arg name="x" default="-8.0"/>
-	<arg name="y" default="-22.0"/>
+	<arg name="x" default="0.0"/>
+	<arg name="y" default="0.0"/>
 	<arg name="z" default="0.3"/>
-	<arg name="max_speed" default="1.0"/>
-
-	<!-- Voxblox Node -->
-	<arg name="resolution" default="0.2"/>
-	<arg name="voxels_per_side" default="16"/>
-	<arg name="max_ray" default="25.0"/>
-	<arg name="clear_sphere" default="True"/>
-	<arg name="clear_sphere_r" default="0.5"/>
-	<arg name="occ_sphere_r" default="1.2"/>
+	<arg name="max_speed" default="0.75"/>
 
 	<!-- TF -->
 	<arg name="perfect_odom" default="true" />
-
-	<!-- Voxblox mapping -->
-	<include file="$(find voxblox_ros)/launch/drone.launch">
-		<arg name="resolution" value="$(arg resolution)"/>
-		<arg name="voxels_per_side" value="$(arg voxels_per_side)"/>
-		<arg name="max_ray" value="$(arg max_ray)"/>
-		<arg name="clear_sphere" value="$(arg clear_sphere)"/>
-		<arg name="clear_sphere_r" value="$(arg clear_sphere_r)"/>
-		<arg name="occ_sphere_r" value="$(arg occ_sphere_r)"/>
-	</include>
 
 	<!-- Simulation -->
 	<include file="$(find m100_simulation)/launch/m100.launch">
