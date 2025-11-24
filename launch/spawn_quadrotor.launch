@@ -3,7 +3,6 @@
 <launch>
   <arg name="name" default="quadrotor"/>
   <arg name="model" default="$(find m100_simulation)/simulation/urdf/quadrotor.gazebo.xacro"/>
-  <!-- <arg name="tf_prefix" default="$(optenv ROS_NAMESPACE)"/> -->
   <arg name="tf_prefix" default=""/>
   <arg name="controller_definition" default="$(find hector_quadrotor_controller)/launch/controller.launch"/>
 
@@ -16,11 +15,9 @@
   <arg name="use_pose_estimation" if="$(arg use_ground_truth_for_control)" default="false"/>
   <arg name="use_pose_estimation" unless="$(arg use_ground_truth_for_control)" default="true"/>
 
-  <arg name="world_frame" default="map"/> <!-- This should actually be "/world". See https://github.com/ros-simulation/gazebo_ros_pkgs/pull/324 -->
-  <!-- <arg name="base_link_frame" default="$(arg tf_prefix)/base_link"/> -->
+  <arg name="world_frame" default="map"/> 
   <arg name="base_link_frame" default="base_link"/>
 
-  <!-- send the robot XML to param server -->
   <param name="robot_description" command="$(find xacro)/xacro '$(arg model)' base_link_frame:=$(arg base_link_frame) world_frame:=$(arg world_frame)" />
   <param name="tf_prefix" type="string" value="$(arg tf_prefix)" />
   <param name="base_link_frame" type="string" value="$(arg base_link_frame)"/>
@@ -44,7 +41,6 @@
   <!-- publish state and tf -->
   <node name="ground_truth_to_tf" pkg="message_to_tf" type="message_to_tf" output="screen">
     <param name="odometry_topic" value="ground_truth/state" />
-    <!-- <param name="frame_id" value="/$(arg world_frame)" /> -->
     <param name="frame_id" value="odom" />
     <param name="tf_prefix" value="$(arg tf_prefix)" if="$(arg use_ground_truth_for_tf)" />
     <param name="tf_prefix" value="$(arg tf_prefix)/ground_truth" unless="$(arg use_ground_truth_for_tf)" />
@@ -73,10 +69,5 @@
   <arg name="motors" default="dji_3510" />
   <rosparam command="load" file="$(find hector_quadrotor_model)/param/quadrotor_aerodynamics.yaml" />
   <rosparam command="load" file="$(find m100_simulation)/simulation/param/$(arg motors).yaml" />
-
-  <!-- TF from map to odom -->
-  <!-- <node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" /> -->
-  
-  <node pkg="tf" type="static_transform_publisher" name="base2front" args="5.0 0 0 0 0 0 base_link front 100" />
 
 </launch>
