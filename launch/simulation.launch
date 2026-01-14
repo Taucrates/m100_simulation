@@ -1,0 +1,43 @@
+<launch>
+	<!-- Gazebo -->
+	<arg name="gazebo_world" default="indoor_at" />
+	<arg name="use_sim_time" default="True"/>
+	<arg name="gazebo_gui" default="True"/>
+	<arg name="x" default="0.0"/>
+	<arg name="y" default="0.0"/>
+	<arg name="z" default="0.3"/>
+	<arg name="max_speed" default="0.75"/>
+
+	<!-- TF -->
+	<arg name="perfect_odom" default="true" />
+
+	<!-- Simulation -->
+	<include file="$(find m100_simulation)/launch/m100.launch">
+		<arg name="use_sim_time" value="$(arg use_sim_time)"/>
+		<arg name="gazebo_world" value="$(arg gazebo_world)"/>
+		<arg name="gui" value="$(arg gazebo_gui)"/>
+		<arg name="x" default="$(arg x)"/>
+		<arg name="y" default="$(arg y)"/>
+		<arg name="z" default="$(arg z)"/>
+		<arg name="perfect_odom" value="$(arg perfect_odom)" />
+	</include>
+
+	<include file="$(find m100_simulation)/launch/control_behaviours.launch">
+		<arg name="max_speed" value="$(arg max_speed)"/>
+	</include>
+
+	<!-- Joystick controller -->
+	<include file="$(find teleop_twist_joy)/launch/teleop.launch"/>
+
+	<!-- TF from map to odom -->
+	<group if="$(arg perfect_odom)">
+		<node pkg="tf" type="static_transform_publisher" name="map2odom" args="0 0 0 0 0 0 map odom 100" />
+	</group>
+
+	<!-- Take off and landing -->
+	<node pkg="takeoff_land" type="takeoff_land_code.py" name="takeoff_land" output="screen"/>
+	
+	<!-- Visualization in rviz -->
+  	<node name="rviz" pkg="rviz" type="rviz" output="log" args="-d $(find m100_simulation)/rviz/exploration_drone.rviz" />
+
+</launch>

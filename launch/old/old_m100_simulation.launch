@@ -97,7 +97,9 @@
 	</group>
 
 	<!-- Take off and landing -->
-	<!-- <node pkg="takeoff_land" type="takeoff_land_code.py" name="takeoff_land" output="screen"/> -->
+	<node pkg="takeoff_land" type="takeoff_land_code.py" name="takeoff_land" output="screen"/>
+	
+
 
 	<!-- Visualize the point cloud in rviz -->
   	<node name="rviz" pkg="rviz" type="rviz" output="log" args="-d $(find m100_simulation)/rviz/exploration_drone.rviz" />

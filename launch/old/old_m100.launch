@@ -16,6 +16,7 @@
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
       <arg name="world_name" value="$(find m100_simulation)/worlds/$(arg gazebo_world).world"/>
+      <!-- <arg name="world_name" value="$(find m100_simulation)/worlds/cave_qual.sdf"/> -->
       <arg name="gui" value="$(arg gui)" />
       <arg name="paused" value="$(arg paused)"/>
       <arg name="use_sim_time" value="$(arg use_sim_time)"/>
@@ -23,11 +24,15 @@
       <arg name="extra_gazebo_args" value="$(arg extra_gazebo_args) --verbose"/>
   </include>
 
+  <!-- <param name="use_sim_time" value="$(arg use_sim_time)"/> -->
+
   <include file="$(find m100_simulation)/launch/spawn_quadrotor.launch">
     <arg name="x" value="$(arg x)"/>
     <arg name="y" value="$(arg y)"/>
     <arg name="z" value="$(arg z)"/>
     <arg name="use_ground_truth_for_tf" value="$(arg perfect_odom)" />
   </include>
+
+  <!-- <node name="robot_spawn" pkg="m100_simulation" type="robot_spawn.sh" /> -->
 
 </launch>
